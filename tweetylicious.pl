@@ -164,6 +164,29 @@ get '/:user' => sub {
 } => 'homepage';
 
 
+# this one handles users creating new posts ('message')
+post '/:user/post' => sub {
+    my $self = shift;
+
+    # user can only create posts for their own account
+    $self->redirect_to('/')
+       unless $self->session('name') eq $self->param('user');
+
+    my $user = $self->session('name');
+
+    if( $self->param('message') ) {
+        my $post = Model::Post->create(
+            username => $user,
+            content  => $self->param('message'),
+            date     => time,
+        );
+    }
+
+    # render the user page again
+    $self->redirect_to("/$user");
+};
+
+
 # let's rock and roll!
 shagadelic;
 
