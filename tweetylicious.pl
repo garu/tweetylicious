@@ -187,6 +187,21 @@ post '/:user/post' => sub {
 };
 
 
+get '/:user/post/:id/delete' => sub {
+    my $self = shift;
+
+    # user can only delete posts for their own account
+    $self->redirect_to('/')
+       unless $self->session('name') eq $self->param('user');
+
+    my $post = Model::Post->select('WHERE id = ?', $self->param('id'));
+    $post->[0]->delete if $post->[0];
+
+    # render the user page again
+    $self->redirect_to('/' . $self->session('name'));
+};
+
+
 # let's rock and roll!
 shagadelic;
 
