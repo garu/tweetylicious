@@ -110,6 +110,14 @@ post '/login' => sub {
 } => 'login';
 
 
+# user logout is just a matter of expiring the session
+get '/logout' => sub {
+    my $self = shift;
+    $self->session( expires => 1);
+    $self->redirect_to('/');
+};
+
+
 # let's rock and roll!
 shagadelic;
 
@@ -133,7 +141,11 @@ __DATA__
  <body>
   <div id="header"><a href="/"><div id="logo">Tweetylicious!</div></a>
    <div class="options">
+% if (session 'name') {
+    <a href="/<%= session 'name' %>">Home</a><a href="/logout">Sign-Out</a>
+% } else {
     <a href="/login">Sign-In</a><a href="/join">Join us!</a>
+% }
    </div>
   </div>
 
