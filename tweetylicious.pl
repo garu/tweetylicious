@@ -123,6 +123,10 @@ get '/:user' => sub {
     my $self = shift;
     my $user = $self->param('user');
 
+    # renders our error page unless the user exists
+    return $self->render('not_found')
+        unless Model::User->count('WHERE username = ?', $user);
+
     # fill our stash with information for the template
     $self->stash(
         user => Model::User->load( $user ),
@@ -271,6 +275,12 @@ __DATA__
 <p>Tweetylicious also relies on the powerful jQuery JavaScript library, but that's downloaded and processed by the clients browser, so don't worry about it. Each user's avatar image is also provided externally, via gravatar.</p>
 
 <p>Have fun!</p>
+</div>
+
+@@ not_found.html.ep
+% layout 'main';
+<div id="content" class="full ui-corner-all">
+<h3>Sorry, we couldn't find the page you were looking for :-(</h3>
 </div>
 
 @@ static.css.ep
