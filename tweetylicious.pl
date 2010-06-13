@@ -88,9 +88,9 @@ post '/join' => sub {
             bio      => $self->param('bio'),
     );
 
-    # auto-login the user after he joins, and redirect to /
+    # auto-login the user after he joins, and show his/her homepage
     $self->session( name => $user );
-    $self->redirect_to("/");
+    $self->redirect_to("/$user");
 } => 'join';
 
 
@@ -104,7 +104,7 @@ post '/login' => sub {
            $user, b(app->secret . $self->param('password'))->md5_sum) == 1
     ) {
         $self->session( name => $user );
-        return $self->redirect_to("/");
+        return $self->redirect_to("/$user");
     }
     $self->stash( error => 1 );
 } => 'login';
