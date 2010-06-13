@@ -53,6 +53,9 @@ __DATA__
   <title>Tweetylicious</title>
   <link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/dark-hive/jquery-ui.css" rel="Stylesheet" />
   <link type="text/css" rel="stylesheet" media="screen" href="/static.css" rel="Stylesheet" />
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="/static.js"></script>
  </head>
  <body>
   <div id="header"><a href="/"><div id="logo">Tweetylicious!</div></a>
@@ -204,4 +207,9 @@ __DATA__
   #footer {clear:left; margin: 20px auto; padding-top: 10px;height: 26px; background: #555; color: #ccc; font-size:12px; text-align: center; }
   #footer a { text-decoration: none; color: #eee }
 
+@@ static.js.ep
+$(function() {
+    // creating our buttons
+    $(".options").find("a").button();
+});
 
