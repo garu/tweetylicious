@@ -37,6 +37,19 @@ use ORLite {
 };
 
 
+# this validates registration data before we commit to the database
+sub validate {
+    my ($user, $pass, $pass2) = @_;
+    return 'username field must not be blank' unless $user and length $user;
+    return 'password field must not be blank' unless $pass and length $pass;
+    return 'please re-type your password'     unless $pass2 and length $pass2;
+    return "passwords don't match"            unless $pass eq $pass2;
+    return 'sorry, this user already exists'
+        if Model::User->count( 'WHERE username = ?', $user) > 0;
+    return;
+}
+
+
 #-------------------------#
 # now the web application #
 #-------------------------#
@@ -58,6 +71,9 @@ get  '/join' => 'join';
 post '/join' => sub {
     my $self  = shift;
     my $user  = $self->param('username');
+    my $error = Model::validate( $user, $self->param('pwd'), $self->param('re-pwd'));
+    $self->stash( error => $error );
+    return if $error;
 
     Model::User->create(
             username => $user,
@@ -111,7 +127,12 @@ __DATA__
 % layout 'main';
 <div id="content" class="full ui-corner-all">
 <h1>Join us, it's free!</h1>
-
+% if (my $error = stash 'error') {
+ <div class="ui-state-error ui-corner-all" style="width:450px">
+     <span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em"></span><strong>Sorry:</strong> <%= $error %>
+ </div>
+ <hr />
+% }
 <form name="join" method="POST">
  <table>
   <tr><td>Username</td><td><input name="username" type="text" tabindex="1" value="<%= param 'username' %>" /></td></tr>
