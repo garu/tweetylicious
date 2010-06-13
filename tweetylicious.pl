@@ -43,6 +43,7 @@ use ORLite {
 package main;
 
 use Mojolicious::Lite;
+use Mojo::ByteStream 'b'; # for unicode and md5
 
 # this is a fake static route for our static data (static.js, static.css)
 get '/static' => 'static';
@@ -52,8 +53,25 @@ get '/static' => 'static';
 get '/' => 'index';
 
 
-# this controls a user registering
+# these two control a user registering
 get  '/join' => 'join';
+post '/join' => sub {
+    my $self  = shift;
+    my $user  = $self->param('username');
+
+    Model::User->create(
+            username => $user,
+            password => b(app->secret . $self->param('pwd'))->md5_sum,
+            email    => $self->param('email'),
+            gravatar => b($self->param('email'))->md5_sum,
+            bio      => $self->param('bio'),
+    );
+
+    # auto-login the user after he joins, and redirect to /
+    $self->session( name => $user );
+    $self->redirect_to("/");
+} => 'join';
+
 
 
 # let's rock and roll!
