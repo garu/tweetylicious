@@ -96,6 +96,18 @@ post '/join' => sub {
 
 # user login
 get  '/login' => 'login';
+post '/login' => sub {
+    my $self = shift;
+    my $user = $self->param('username') || '';
+
+    if ( Model::User->count( 'WHERE username=? AND password=?',
+           $user, b(app->secret . $self->param('password'))->md5_sum) == 1
+    ) {
+        $self->session( name => $user );
+        return $self->redirect_to("/");
+    }
+    $self->stash( error => 1 );
+} => 'login';
 
 
 # let's rock and roll!
