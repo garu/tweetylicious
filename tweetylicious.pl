@@ -39,13 +39,18 @@ use ORLite {
 
 # this validates registration data before we commit to the database
 sub validate {
-    my ($user, $pass, $pass2) = @_;
+    my ($user, $pass, $pass2, $routes) = @_;
     return 'username field must not be blank' unless $user and length $user;
     return 'password field must not be blank' unless $pass and length $pass;
     return 'please re-type your password'     unless $pass2 and length $pass2;
     return "passwords don't match"            unless $pass eq $pass2;
     return 'sorry, this user already exists'
         if Model::User->count( 'WHERE username = ?', $user) > 0;
+
+    # let's not allow usernames that are part of a valid route
+    return 'sorry, invalid username'
+       if grep { length $_->name and index($user, $_->name) == 0 } @$routes;
+
     return;
 }
 
@@ -71,7 +76,7 @@ get  '/join' => 'join';
 post '/join' => sub {
     my $self  = shift;
     my $user  = $self->param('username');
-    my $error = Model::validate( $user, $self->param('pwd'), $self->param('re-pwd'));
+    my $error = Model::validate( $user, $self->param('pwd'), $self->param('re-pwd'), app->routes->children);
     $self->stash( error => $error );
     return if $error;
 
