@@ -33,8 +33,33 @@ use ORLite {
                                  bio      TEXT
                                 );'
             );
+    $dbh->do('CREATE TABLE post (id INTEGER NOT NULL PRIMARY KEY
+                                    ASC AUTOINCREMENT,
+                                 username TEXT NOT NULL
+                                          CONSTRAINT fk_user_username
+                                          REFERENCES user(username)
+                                          ON DELETE CASCADE,
+                                 content TEXT NOT NULL,
+                                 date INTEGER NOT NULL);'
+            );
   },
 };
+
+
+# this returns sorted posts from all users in @users
+sub fetch_posts_by {
+    my @users = @_;
+    my $query = 'OR post.username = ? ' x (@users - 1);
+    return Model->selectall_arrayref(
+            "SELECT user.username, post.id, gravatar, content,
+                    datetime(date, 'unixepoch', 'localtime') as date
+               FROM user
+               LEFT JOIN post ON user.username = post.username
+               WHERE post.username = ? $query
+               ORDER BY date DESC",
+               { Slice => {} }, @users
+    );
+}
 
 
 # this validates registration data before we commit to the database
