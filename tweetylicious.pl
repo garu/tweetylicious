@@ -155,6 +155,30 @@ __DATA__
  </body>
 </html>
 
+@@ homepage.html.ep
+% layout 'main';
+<div id="content" class="half ui-corner-left">
+% if (session('name') and session('name') eq $user->{username}) {
+    <h2>Hi, <%= session 'name' %>!</h2>
+   <form id="post" action="<%= url_for %>/post" method="POST">
+    <textarea class="ui-corner-all" cols="50" rows="3" id="message" name="message" tabindex="1"></textarea>
+    <span id="charsleft"></span>
+    <input id="submit" tabindex="2" type="submit" value="Tell the World!" />
+   </form>
+% } else {
+<h2 id="title"><%= $user->{username} %>'s posts</h2>
+% }
+<ul class="messages">
+%# here we'll render all the posts in the page (later)
+</ul>
+</div>
+<div id="sub-section" class="ui-corner-right">
+   <ul id="bio">
+    <li><span>Name</span><%= $user->{username} %></li>
+    <li><span>Bio</span><%= $user->{bio} %></li>
+   </ul>
+</div>
+
 @@ login.html.ep
 % layout 'main';
 <div id="content" class="full ui-corner-all">
