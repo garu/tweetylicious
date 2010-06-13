@@ -21,6 +21,21 @@
 #--------------------------------------#
 package Model;
 
+use ORLite {
+  file    => 'tweetylicious.db',
+  cleanup => 'VACUUM',
+  create  => sub {
+    my $dbh = shift;
+    $dbh->do('CREATE TABLE user (username TEXT NOT NULL UNIQUE PRIMARY KEY,
+                                 password TEXT NOT NULL,
+                                 email    TEXT,
+                                 gravatar TEXT,
+                                 bio      TEXT
+                                );'
+            );
+  },
+};
+
 
 #-------------------------#
 # now the web application #
