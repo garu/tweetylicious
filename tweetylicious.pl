@@ -94,6 +94,9 @@ post '/join' => sub {
 } => 'join';
 
 
+# user login
+get  '/login' => 'login';
+
 
 # let's rock and roll!
 shagadelic;
@@ -127,6 +130,26 @@ __DATA__
   <div id="footer" class="ui-corner-all">Tweetylicious is Powered by <a href="http://perl.org">Perl 5</a>, <a href="http://mojolicious.org">Mojolicious</a>, <a href="http://search.cpan.org/perldoc?ORLite">ORLite</a> and <a href="http://jquery.org">jQuery</a>! Released under <a href="http://dev.perl.org/licenses/">the same terms as Perl itself</a>. </div>
  </body>
 </html>
+
+@@ login.html.ep
+% layout 'main';
+<div id="content" class="full ui-corner-all">
+<h1>Sign-in</h1>
+% if ( stash 'error' ) {
+ <div class="ui-state-error ui-corner-all" style="width:466px">
+     <span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em"></span><strong>Sorry, invalid username/password combination.</strong>
+ </div>
+ <p>Not a user yet? <a href="/join">Join now! It's free!</a></p>
+ <hr />
+% }
+<form name="login" method="POST" action="/login">
+ <table>
+  <tr><td>User name:</td><td><input type="text" tabindex="1" name="username" value="<%= param 'username' %>" /></td></tr>
+  <tr><td>Password:</td><td><input type="password" tabindex="2" name="password" value="<%= param 'password'%>" /></td></tr>
+ </table>
+<input tabindex="3" type="submit" value="Login!"/>
+</form>
+</div>
 
 @@ join.html.ep
 % layout 'main';
