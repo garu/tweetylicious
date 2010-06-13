@@ -52,6 +52,10 @@ get '/static' => 'static';
 get '/' => 'index';
 
 
+# this controls a user registering
+get  '/join' => 'join';
+
+
 # let's rock and roll!
 shagadelic;
 
@@ -85,6 +89,24 @@ __DATA__
  </body>
 </html>
 
+@@ join.html.ep
+% layout 'main';
+<div id="content" class="full ui-corner-all">
+<h1>Join us, it's free!</h1>
+
+<form name="join" method="POST">
+ <table>
+  <tr><td>Username</td><td><input name="username" type="text" tabindex="1" value="<%= param 'username' %>" /></td></tr>
+  <tr><td>Password</td><td><input name="pwd" type="password" tabindex="2" value="<%= param 'pwd' %>" /></td></tr>
+  <tr><td>Password (again)</td><td><input name="re-pwd" type="password" tabindex="3" value="<%= param 're-pwd' %>" /></td></tr>
+  <tr><td>Email</td><td><input name="email" type="text" tabindex="4" value="<%= param 'email' %>" /></td></tr>
+  </table>
+  <span class="fineprint">Email is optional, and doesn't show in your page. It's used only to fetch your <a href="http://gravatar.com">gravatar</a></span>
+ <p>Tell us a bit about yourself - everyone will see it on your page</p>
+ <textarea class="ui-corner-all" tabindex="5" cols="50" rows="3" id="message" name="bio"><%= param 'bio' %></textarea>
+ <input type="submit" tabindex="6" value="Create!" />
+</form>
+</div>
 
 @@ index.html.ep
 % layout 'main';
