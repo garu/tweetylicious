@@ -29,6 +29,9 @@ package main;
 
 use Mojolicious::Lite;
 
+# this is a fake static route for our static data (static.js, static.css)
+get '/static' => 'static';
+
 
 # this controls the main index page
 get '/' => 'index';
@@ -48,6 +51,8 @@ __DATA__
  <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>Tweetylicious</title>
+  <link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/dark-hive/jquery-ui.css" rel="Stylesheet" />
+  <link type="text/css" rel="stylesheet" media="screen" href="/static.css" rel="Stylesheet" />
  </head>
  <body>
   <div id="header"><a href="/"><div id="logo">Tweetylicious!</div></a>
@@ -55,14 +60,14 @@ __DATA__
 
   <%= content %>
 
-  <div id="footer">Tweetylicious is Powered by <a href="http://perl.org">Perl 5</a>, <a href="http://mojolicious.org">Mojolicious</a>, <a href="http://search.cpan.org/perldoc?ORLite">ORLite</a> and <a href="http://jquery.org">jQuery</a>! Released under <a href="http://dev.perl.org/licenses/">the same terms as Perl itself</a>. </div>
+  <div id="footer" class="ui-corner-all">Tweetylicious is Powered by <a href="http://perl.org">Perl 5</a>, <a href="http://mojolicious.org">Mojolicious</a>, <a href="http://search.cpan.org/perldoc?ORLite">ORLite</a> and <a href="http://jquery.org">jQuery</a>! Released under <a href="http://dev.perl.org/licenses/">the same terms as Perl itself</a>. </div>
  </body>
 </html>
 
 
 @@ index.html.ep
 % layout 'main';
-<div id="content">
+<div id="content" class="info full ui-corner-all">
 
 <h1>What is Tweetylicious?</h1>
 <p>Tweetylicious is a <a href="http://en.wikipedia.org/wiki/Micro-blogging">microblogging</a> web application in a single file! It was built from scratch using state of the art technology, and is meant to demonstrate how easy and fun it is to create your own Web applications in modern Perl 5!</p>
@@ -97,4 +102,103 @@ __DATA__
 
 <p>Have fun!</p>
 </div>
+
+@@ static.css.ep
+  body {
+    width:720px;
+    margin:0 auto;
+    text-align:center;
+    background: #0f1923; /* #333; */
+    border:0;
+  }
+  a { text-decoration: none }
+
+  #header,#content,#sub-section,#footer {
+    overflow:hidden;
+    display:inline-block;
+    text-align:left
+  }
+  #header li { display: inline }
+  #logo {
+    float: left;
+    background: #0972a5;
+    height: 60px;
+    font-family: "Georgia", "Times New Roman", serif;
+    font-size: 26px;
+    color: #eee;
+    padding: 50px 10px 10px 10px;
+  }
+  .options { text-align: right; margin-left: 450px; margin-top: -5px }
+  .search { float: right; margin-top: 50px }
+  #search { background-color: #bbb; color: #444; width: 200px; font-size: 16px; }
+  #content {
+    background: #efe;
+    font-family: "Verdana", sans-serif;
+    min-height: 100px;
+    padding-left: 10px;
+  }
+  h1 { font-size: 1.2em }
+  #title { margin-left: 30px; }
+  .half { width: 78.7% }
+  .full { width: 100% }
+  .fineprint { font-size: 0.6em }
+  ul { margin: 0; padding: 0; list-style: none; list-style-position: outside; }
+  .info { padding-bottom: 10px }
+  .info ul { list-style-type: square}
+  .info ul li{ margin-bottom:10px }
+  #content ul {
+    display: block;
+    width: 90%;
+    margin: 10px auto;
+  }
+  #content ul.messages li {
+    border-top: 1px solid #ddd;
+    padding-top: 16px;
+    height: 70px;
+    margin-top: 10px;
+  }
+  .when { display: block; font-size: 10px; color: #aaa; }
+  img { float: left; margin: 1px; border: 0 }
+  #content .ui-icon { float: right; position: relative; top: -10px; right: 10px }
+  #content a:hover.ui-icon { border: 1px #ff0 dashed }
+  #content a { text-decoration: none }
+  .who { margin-right: 8px; font-weight: bold }
+  #sub-section {
+    width: 20%;
+    background: #ccc;
+    font: 0.8em "Verdana", sans-serif;
+  }
+  #message {
+    border: 1px solid #aaa;
+    padding: 4px 2px;
+    resize: none;
+    font-size: 1.15em;
+    font-family: sans-serif;
+    color: #333;
+  }
+  #post {
+    margin: 10px 50px 30px 50px;
+  }
+  #post input { margin-right: 54px; float: right; font-size: 0.6em; }
+  #charsleft {
+    display: block;
+    float: left;
+    font-weight: bold;
+  }
+  .orange { color: #ff6300 }
+  .red    { color: #d11 }
+  #bio li { margin: 6px; line-height: 1em; }
+  #bio span, #followers span, #following span, #totalposts span {
+      font-weight: bold;
+      margin-right: 4px;
+  }
+  #followers li, #following li { margin: 1px }
+  #followers, #following, #totalposts { clear: both; margin-left: 5px; padding-top: 10px }
+  /* safari and opera need this */
+  #header,#footer {width:100%}
+
+  #content,#sub-section {float:left; margin-top: 20px; min-height: 360px; }
+  #footer {clear:left; margin: 20px auto; padding-top: 10px;height: 26px; background: #555; color: #ccc; font-size:12px; text-align: center; }
+  #footer a { text-decoration: none; color: #eee }
+
 
