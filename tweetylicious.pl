@@ -56,6 +56,9 @@ __DATA__
  </head>
  <body>
   <div id="header"><a href="/"><div id="logo">Tweetylicious!</div></a>
+   <div class="options">
+    <a href="/login">Sign-In</a><a href="/join">Join us!</a>
+   </div>
   </div>
 
   <%= content %>
