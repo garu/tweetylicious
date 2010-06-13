@@ -152,9 +152,14 @@ get '/:user' => sub {
     return $self->render('not_found')
         unless Model::User->count('WHERE username = ?', $user);
 
+    # fetch posts by user
+    my $posts = Model::fetch_posts_by($user);
+
     # fill our stash with information for the template
     $self->stash(
-        user => Model::User->load( $user ),
+        user        => Model::User->load( $user ),
+        posts       => $posts || [],
+        total_posts => Model::Post->count('WHERE username = ?', $user),
     );
 } => 'homepage';
 
@@ -198,6 +203,7 @@ __DATA__
 
 @@ homepage.html.ep
 % layout 'main';
+% use Mojo::ByteStream 'b';
 <div id="content" class="half ui-corner-left">
 % if (session('name') and session('name') eq $user->{username}) {
     <h2>Hi, <%= session 'name' %>!</h2>
@@ -210,7 +216,15 @@ __DATA__
 <h2 id="title"><%= $user->{username} %>'s posts</h2>
 % }
 <ul class="messages">
-%# here we'll render all the posts in the page (later)
+%# now we render all the posts in the page
+% foreach my $post ( @$posts ) {
+    <li class="ui-corner-all">
+%# the author of the post can delete it
+% if ($post->{username} eq session('name') ) {
+        <a href="/<%= $post->{username} %>/post/<%= $post->{id} %>/delete" class="ui-icon ui-icon-trash" title="delete this post"></a>
+% }
+        <a class="who" href="/<%= $post->{username} %>"><img src="http://www.gravatar.com/avatar/<%= $post->{gravatar} %>?s=60.jpg" /><%= $post->{username} %></a><span class="what"><%= b($post->{content})->decode('UTF-8')->to_string %></span><span class="when"><%= $post->{date} %></span></li>
+% }
 </ul>
 </div>
 <div id="sub-section" class="ui-corner-right">
@@ -218,6 +232,7 @@ __DATA__
     <li><span>Name</span><%= $user->{username} %></li>
     <li><span>Bio</span><%= $user->{bio} %></li>
    </ul>
+   <div id="totalposts"><span><%= $total_posts %></span> Posts</div>
 </div>
 
 @@ login.html.ep
