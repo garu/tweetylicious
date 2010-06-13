@@ -118,6 +118,18 @@ get '/logout' => sub {
 };
 
 
+# this controls a user's page
+get '/:user' => sub {
+    my $self = shift;
+    my $user = $self->param('user');
+
+    # fill our stash with information for the template
+    $self->stash(
+        user => Model::User->load( $user ),
+    );
+} => 'homepage';
+
+
 # let's rock and roll!
 shagadelic;
 
