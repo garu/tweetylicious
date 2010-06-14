@@ -46,6 +46,22 @@ use ORLite {
 };
 
 
+# this returns our search results
+sub search_posts {
+    my @items_to_search = @_;
+    my $query = 'OR post.content LIKE ? ' x (@items_to_search - 1);
+    return Model->selectall_arrayref(
+            "SELECT user.username, post.id, gravatar, content,
+                    datetime(date, 'unixepoch', 'localtime') as date
+               FROM user
+               LEFT JOIN post ON user.username = post.username
+               WHERE post.content LIKE ? $query
+               ORDER BY date DESC",
+               { Slice => {} }, map { "%$_%" } @items_to_search
+    );
+}
+
+
 # this returns sorted posts from all users in @users
 sub fetch_posts_by {
     my @users = @_;
