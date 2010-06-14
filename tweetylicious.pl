@@ -590,7 +590,8 @@ $(function() {
     // formatting our content
     $(".what").each(function() {
         var message = $(this).html()
-                  .replace(/@(\w+)/g, "@<a href=\"/$1\">$1</a>");
+                  .replace(/@(\w+)/g, "@<a href=\"/$1\">$1</a>")
+                  .replace(/#(\w+)/g, "<a href=\"/search?query=%23$1\">#$1</a>");
         $(this).html(message);
     });
 });
