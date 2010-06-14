@@ -483,5 +483,11 @@ $(function() {
        }
        $("#charsleft").text( left + ' characters left' );
     });
+
+    // highlighting selection
+    $("#content ul.messages li").hover(
+        function() { $(this).animate( {backgroundColor:'#ded'}, 400 ); },
+        function() { $(this).animate( {backgroundColor:'#efe'}, 400 ); }
+    );
 });
 
