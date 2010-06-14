@@ -372,6 +372,11 @@ __DATA__
     <input id="submit" tabindex="2" type="submit" value="Tell the World!" />
    </form>
 % } else {
+%   if ( stash 'followed' ) {
+     <a class="fineprint" href="<%= url_for %>/unfollow">[-] unfollow</a>
+%   } else {
+     <a class="fineprint" href="<%= url_for %>/follow">[+] follow!</a>
+%   }
 <h2 id="title"><%= $user->{username} %>'s posts</h2>
 % }
 <ul class="messages">
@@ -390,6 +395,18 @@ __DATA__
    <ul id="bio">
     <li><span>Name</span><%= $user->{username} %></li>
     <li><span>Bio</span><%= $user->{bio} %></li>
+   </ul>
+   <ul id="followers">
+    <li><span><%= scalar keys %$followers %></span> Followers</li>
+% foreach my $face ( keys %$followers ) {
+    <li><a href="/<%= $face %>"><img src="http://www.gravatar.com/avatar/<%= $followers->{$face}->{gravatar} %>?s=20.jpg" /></a></li>
+% }
+   </ul>
+   <ul id="following">
+    <li><span><%= scalar keys %$following %></span> Following</li>
+% foreach my $face ( keys %$following ) {
+    <li><a href="/<%= $face %>"><img src="http://www.gravatar.com/avatar/<%= $following->{$face}->{gravatar} %>?s=20.jpg" /></a></li>
+% }
    </ul>
    <div id="totalposts"><span><%= $total_posts %></span> Posts</div>
 </div>
