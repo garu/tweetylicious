@@ -465,5 +465,23 @@ $(function() {
     // creating our buttons
     $(".options").find("a").button();
     $("#submit").button();
+
+    // showing how many characters are left
+    $("#charsleft").text("140 characters left");
+    $("#message").keyup(function() {
+       var left = 140 - $("#message").val().length;
+       if (left < 0 ) {
+         $("#charsleft").removeClass("orange").addClass("red");
+         $("#submit").button("option", "disabled", true);
+       } else {
+         $("#submit").button("option", "disabled", false);
+         if (left < 40) {
+           $("#charsleft").removeClass("red").addClass("orange");
+         } else {
+           $("#charsleft").removeClass("red").removeClass("orange");
+         }
+       }
+       $("#charsleft").text( left + ' characters left' );
+    });
 });
 
