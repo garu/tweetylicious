@@ -484,6 +484,16 @@ $(function() {
     $(".options").find("a").button();
     $("#submit").button();
 
+    // search bar effects
+    var searchDefault = "Search Tweetylicious...";
+    $("#search").val(searchDefault);
+    $("#search").focus( function() {
+        if($(this).val() == searchDefault) $(this).val("");
+    });
+    $("#search").blur(function(){
+        if($(this).val() == "") $(this).val(searchDefault);
+    });
+
     // showing how many characters are left
     $("#charsleft").text("140 characters left");
     $("#message").keyup(function() {
