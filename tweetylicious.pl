@@ -112,6 +112,15 @@ get '/static' => 'static';
 get '/' => 'index';
 
 
+# search!
+get '/search' => sub {
+    my $self = shift;
+    my @items = split ' ', $self->param('query');
+
+    $self->stash( post_results => Model::search_posts(@items) );
+} => 'search';
+
+
 # these two control a user registering
 get  '/join' => 'join';
 post '/join' => sub {
