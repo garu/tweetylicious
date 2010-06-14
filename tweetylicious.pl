@@ -489,5 +489,12 @@ $(function() {
         function() { $(this).animate( {backgroundColor:'#ded'}, 400 ); },
         function() { $(this).animate( {backgroundColor:'#efe'}, 400 ); }
     );
+
+    // formatting our content
+    $(".what").each(function() {
+        var message = $(this).html()
+                  .replace(/@(\w+)/g, "@<a href=\"/$1\">$1</a>");
+        $(this).html(message);
+    });
 });
 
