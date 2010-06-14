@@ -185,9 +185,16 @@ post '/:user/post' => sub {
             content  => $self->param('message'),
             date     => time,
         );
+
+        # if it's an Ajax request, return a JSON object of post and gravatar
+        my $header = $self->req->headers->header('X-Requested-With') || '';
+        if ($header eq 'XMLHttpRequest') {
+            my $gravatar = Model::User->load($user)->gravatar;
+            return $self->render_json({ %$post, gravatar => $gravatar });
+        }
     }
 
-    # render the user page again
+    # otherwise, just render the user page again
     $self->redirect_to("/$user");
 };
 
@@ -489,6 +496,19 @@ $(function() {
         function() { $(this).animate( {backgroundColor:'#ded'}, 400 ); },
         function() { $(this).animate( {backgroundColor:'#efe'}, 400 ); }
     );
+
+    /* if user has javascript enabled, we turn
+       the 'tell the world' button into Ajax
+       (well, actually Ajaj, since we use JSON ;) */
+    $("#submit").click(function(event) {
+        event.preventDefault();
+        var href = $("#post").attr("action");
+        $.post(href, $("#post").serialize(), function(data) {
+            $("#message").text("");
+            $("#content ul").prepend('<li style="display:none" class="ui-corner-all"><a href="/' + data.username + '/post/' + data.id + '/delete" class="ui-icon ui-icon-trash" title="delete this post"></a><a class="who" href="/' + data.username + '"><img src="http://www.gravatar.com/avatar/' + data.gravatar + '?s=60.jpg" />' + data.username + '</a><span class="what">' + data.content + '</span><span class="when">' + data.date + '</span></li>');
+            $("#content li:first").show("drop", {}, 1000);
+        }, "json");
+    });
 
     // formatting our content
     $(".what").each(function() {
