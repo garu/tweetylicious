@@ -205,7 +205,13 @@ get '/:user/post/:id/delete' => sub {
     my $post = Model::Post->select('WHERE id = ?', $self->param('id'));
     $post->[0]->delete if $post->[0];
 
-    # render the user page again
+    # if it was an Ajax request, we return a JSON object in confirmation
+    my $header = $self->req->headers->header('X-Requested-With') || '';
+    if ($header eq 'XMLHttpRequest') {
+        return $self->render_json( {answer => 1} );
+    }
+
+    # otherwise, just render the user page again
     $self->redirect_to('/' . $self->session('name'));
 };
 
@@ -498,8 +504,20 @@ $(function() {
     );
 
     /* if user has javascript enabled, we turn
-       the 'tell the world' button into Ajax
+       'delete post' and 'tell the world' buttons into Ajax
        (well, actually Ajaj, since we use JSON ;) */
+    function send_to_trash(event) {
+        event.preventDefault();
+        var item = this;
+        var href = $(item).attr("href");
+        $.getJSON(href, function(json) {
+          if (json.answer) {
+            $(item).parent("li").hide("explode", {}, 1000);
+          }
+        });
+    }
+    $("a.ui-icon").click(send_to_trash);
+
     $("#submit").click(function(event) {
         event.preventDefault();
         var href = $("#post").attr("action");
@@ -507,6 +525,7 @@ $(function() {
             $("#message").text("");
             $("#content ul").prepend('<li style="display:none" class="ui-corner-all"><a href="/' + data.username + '/post/' + data.id + '/delete" class="ui-icon ui-icon-trash" title="delete this post"></a><a class="who" href="/' + data.username + '"><img src="http://www.gravatar.com/avatar/' + data.gravatar + '?s=60.jpg" />' + data.username + '</a><span class="what">' + data.content + '</span><span class="when">' + data.date + '</span></li>');
             $("#content li:first").show("drop", {}, 1000);
+            $("#content li:first").find("a.ui-icon").click(send_to_trash);
         }, "json");
     });
 
