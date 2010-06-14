@@ -42,8 +42,39 @@ use ORLite {
                                  content TEXT NOT NULL,
                                  date INTEGER NOT NULL);'
             );
+    $dbh->do('CREATE TABLE follow (id INTEGER NOT NULL PRIMARY KEY
+                                      ASC AUTOINCREMENT,
+                                   source TEXT NOT NULL
+                                          CONSTRAINT fk_user_username
+                                          REFERENCES user(username)
+                                          ON DELETE CASCADE,
+                                   destination TEXT NOT NULL);'
+            );
   },
 };
+
+
+# this returns who follows our user.
+# Each element is a hash of usernames and gravatars
+sub get_followers_for {
+    return Model->selectall_hashref(
+              'SELECT username, gravatar FROM user, follow
+                    WHERE user.username = follow.source
+                      AND follow.destination = ?',
+              'username', {} , $_[0],
+            );
+}
+
+
+# this returns who our user follows
+sub get_followed_by {
+    return Model->selectall_hashref(
+              'select username, gravatar from user, follow
+                    where user.username = follow.destination
+                      and follow.source = ?',
+              'username', {}, $_[0],
+        );
+}
 
 
 # this returns our search results
