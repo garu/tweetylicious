@@ -245,6 +245,11 @@ __DATA__
     <a href="/login">Sign-In</a><a href="/join">Join us!</a>
 % }
    </div>
+   <div class="search ui-widget">
+    <form action="/search" method="GET">
+    <input id="search" name="query" type="text" value="" /><input type="submit" value=">" />
+    </form>
+   </div>
   </div>
 
   <%= content %>
