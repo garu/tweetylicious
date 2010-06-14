@@ -361,6 +361,24 @@ __DATA__
 </form>
 </div>
 
+@@ search.html.ep
+% layout 'main';
+% use Mojo::ByteStream 'b';
+<div id="content" class="full ui-corner-all" style="text-align:left">
+<h1>Results for '<%= param 'query' %>'</h1>
+
+ <ul class="messages">
+% foreach my $post (@$post_results) {
+    <li class="ui-corner-all">
+%# the author of the post can delete it
+% if ($post->{username} eq session('name') ) {
+        <a href="/<%= $post->{username} %>/post/<%= $post->{id} %>/delete" class="ui-icon ui-icon-trash" title="delete this post"></a>
+% }
+        <a class="who" href="/<%= $post->{username} %>"><img src="http://www.gravatar.com/avatar/<%= $post->{gravatar} %>?s=60.jpg" /><%= $post->{username} %></a><span class="what"><%= b($post->{content})->decode('UTF-8')->to_string %></span><span class="when"><%= $post->{date} %></span></li>
+% }
+ </ul>
+</div>
+
 @@ index.html.ep
 % layout 'main';
 <div id="content" class="info full ui-corner-all">
