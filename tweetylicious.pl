@@ -164,14 +164,19 @@ get '/:user' => sub {
 } => 'homepage';
 
 
+# next comes actions that can only be performed if the user is
+# looking at its own posts (creating and deleting posts),
+# so we do a ladder
+ladder sub {
+    my $self = shift;
+    $self->redirect_to('/')
+        unless $self->session('name') eq $self->param('user');
+};
+
+
 # this one handles users creating new posts ('message')
 post '/:user/post' => sub {
     my $self = shift;
-
-    # user can only create posts for their own account
-    $self->redirect_to('/')
-       unless $self->session('name') eq $self->param('user');
-
     my $user = $self->session('name');
 
     if( $self->param('message') ) {
@@ -189,10 +194,6 @@ post '/:user/post' => sub {
 
 get '/:user/post/:id/delete' => sub {
     my $self = shift;
-
-    # user can only delete posts for their own account
-    $self->redirect_to('/')
-       unless $self->session('name') eq $self->param('user');
 
     my $post = Model::Post->select('WHERE id = ?', $self->param('id'));
     $post->[0]->delete if $post->[0];
