@@ -208,21 +208,67 @@ get '/:user' => sub {
     return $self->render('not_found')
         unless Model::User->count('WHERE username = ?', $user);
 
-    # fetch posts by user
-    my $posts = Model::fetch_posts_by($user);
+    # who this user is following?
+    my $following = Model::get_followed_by($user);
+
+    # fetch posts by user and, if the user is looking at its own page,
+    # show posts from people he/she is following too!
+    my @targets = ( $user );
+    if ($self->session('name') and $self->session('name') eq $user) {
+        push @targets, keys %$following;
+    }
+    my $posts = Model::fetch_posts_by(@targets);
+
+    # check if this user is already followed by our visitor,
+    # so we display the appropriate "follow/unfollow" link
+    if ( $self->session('name')
+         and Model::Follow->count('WHERE source = ? AND destination = ?',
+                                  $self->session('name'), $user)
+       ) { $self->stash(followed => 1) }
 
     # fill our stash with information for the template
     $self->stash(
         user        => Model::User->load( $user ),
         posts       => $posts || [],
+        followers   => Model::get_followers_for($user),
+        following   => $following,
         total_posts => Model::Post->count('WHERE username = ?', $user),
     );
 } => 'homepage';
 
 
+# The rest of the routes are specific to logged in users, so we
+# add a ladder to make sure (instead of making sure inside each route)
+ladder sub {
+    my $self = shift;
+    return 1 if $self->session('name');
+    $self->redirect_to('/login') and return;
+};
+
+
+# user wants to follow another
+get '/:user/follow'   => sub {
+    my $self = shift;
+    my ($source, $target) = ($self->session('name'), $self->param('user'));
+
+    Model::Follow->create(source => $source, destination => $target);
+    $self->redirect_to("/$target");
+};
+
+
+# user doesn't want to follow anymore
+get '/:user/unfollow' => sub {
+    my $self = shift;
+    my ($source, $target) = ($self->session('name'), $self->param('user'));
+
+    Model::Follow->delete('WHERE source = ? AND destination = ?', $source, $target);
+    $self->redirect_to("/$target");
+};
+
+
 # next comes actions that can only be performed if the user is
 # looking at its own posts (creating and deleting posts),
-# so we do a ladder
+# so we do another ladder
 ladder sub {
     my $self = shift;
     $self->redirect_to('/')
