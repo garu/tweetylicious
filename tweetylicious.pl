@@ -464,5 +464,6 @@ __DATA__
 $(function() {
     // creating our buttons
     $(".options").find("a").button();
+    $("#submit").button();
 });
 
