@@ -134,6 +134,7 @@ package main;
 
 use Mojolicious::Lite;
 use Mojo::ByteStream 'b'; # for unicode and md5
+use POSIX qw(strftime);
 
 # this is a fake static route for our static data (static.js, static.css)
 get '/static' => 'static';
@@ -290,6 +291,7 @@ post '/(.user)/post' => sub {
         # if it's an Ajax request, return a JSON object of post and gravatar
         my $header = $self->req->headers->header('X-Requested-With') || '';
         if ($header eq 'XMLHttpRequest') {
+ 	    $post->{date} = strftime "%Y-%m-%d %H:%M:%S", localtime($post->{date});
             my $gravatar = Model::User->load($user)->gravatar;
             return $self->render_json({ %$post, gravatar => $gravatar });
         }
