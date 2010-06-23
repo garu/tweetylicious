@@ -200,7 +200,7 @@ get '/logout' => sub {
 
 
 # this controls a user's page
-get '/:user' => sub {
+get '/(.user)' => sub {
     my $self = shift;
     my $user = $self->param('user');
 
@@ -247,7 +247,7 @@ ladder sub {
 
 
 # user wants to follow another
-get '/:user/follow'   => sub {
+get '/(.user)/follow'   => sub {
     my $self = shift;
     my ($source, $target) = ($self->session('name'), $self->param('user'));
 
@@ -257,10 +257,9 @@ get '/:user/follow'   => sub {
 
 
 # user doesn't want to follow anymore
-get '/:user/unfollow' => sub {
+get '/(.user)/unfollow' => sub {
     my $self = shift;
     my ($source, $target) = ($self->session('name'), $self->param('user'));
-
     Model::Follow->delete('WHERE source = ? AND destination = ?', $source, $target);
     $self->redirect_to("/$target");
 };
@@ -271,13 +270,13 @@ get '/:user/unfollow' => sub {
 # so we do another ladder
 ladder sub {
     my $self = shift;
-    $self->redirect_to('/')
+    $self->redirect_to('/')    
         unless $self->session('name') eq $self->param('user');
 };
 
 
 # this one handles users creating new posts ('message')
-post '/:user/post' => sub {
+post '/(.user)/post' => sub {
     my $self = shift;
     my $user = $self->session('name');
 
@@ -301,7 +300,7 @@ post '/:user/post' => sub {
 };
 
 
-get '/:user/post/:id/delete' => sub {
+get '/(.user)/post/:id/delete' => sub {
     my $self = shift;
 
     my $post = Model::Post->select('WHERE id = ?', $self->param('id'));
