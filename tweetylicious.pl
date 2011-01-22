@@ -320,7 +320,7 @@ get '/(.user)/post/:id/delete' => sub {
 
 
 # let's rock and roll!
-shagadelic;
+app->start;
 
 
 #------------------------#
