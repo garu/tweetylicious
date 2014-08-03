@@ -239,8 +239,8 @@ get '/(.user)' => sub {
 
 
 # The rest of the routes are specific to logged in users, so we
-# add a ladder to make sure (instead of making sure inside each route)
-ladder sub {
+# add a under to make sure (instead of making sure inside each route)
+under sub {
     my $self = shift;
     return 1 if $self->session('name');
     $self->redirect_to('/login') and return;
@@ -268,8 +268,8 @@ get '/(.user)/unfollow' => sub {
 
 # next comes actions that can only be performed if the user is
 # looking at its own posts (creating and deleting posts),
-# so we do another ladder
-ladder sub {
+# so we do another under
+under sub {
     my $self = shift;
     $self->redirect_to('/')    
         unless $self->session('name') eq $self->param('user');
